@@ -10,6 +10,29 @@ let user: User
 
 describe("Order Model", () => {
 
+  describe('should have CRUD methods', () => {    
+    it('should have an index method', () => {
+      expect(store.index).toBeDefined();
+    });
+
+    it('should have a show method', () => {
+      expect(store.show).toBeDefined();
+    });
+
+    it('should have a create method', () => {
+      expect(store.create).toBeDefined();
+    });
+
+    it('should have an update method', () => {
+      expect(store.update).toBeDefined();
+    });
+
+    it('should have a delete method', () => {
+      expect(store.delete).toBeDefined();
+    });
+    
+  })
+
   beforeAll(async ()=> {
     const result = await userStore.create({
       first_name: '',
@@ -23,26 +46,6 @@ describe("Order Model", () => {
   afterAll(async () => {
     const result = await userStore.delete(user.id as string)
   })
-  
-  it('should have an index method', () => {
-    expect(store.index).toBeDefined();
-  });
-
-  it('should have a show method', () => {
-    expect(store.show).toBeDefined();
-  });
-
-  it('should have a create method', () => {
-    expect(store.create).toBeDefined();
-  });
-
-  // it('should have an update method', () => {
-  //   expect(store.update).toBeDefined();
-  // });
-
-  // it('should have a delete method', () => {
-  //   expect(store.delete).toBeDefined();
-  // });
 
   it('create method should add a order', async () => {
     const result = await store.create({

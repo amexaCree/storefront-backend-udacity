@@ -54,15 +54,47 @@ const create = async (req: Request, res: Response) => {
     }
 }
 
-// const destroy = async (req: Request, res: Response) => {
-//     try {
-//         const deleted = await store.delete(req.params.id)
-//         res.json(deleted)
-//     } catch (err) {
-//         res.status(400)
-//         res.json(err)
-//     }
-// }
+const edit = async (req: Request, res: Response) => {
+    const product: PartialProduct = {
+        name: req.body.name,
+        price: req.body.price,
+        category: req.body.category
+    }
+
+    try {
+        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
+    } catch (err) {
+        res.status(401)
+        res.json(`Ivalid token. ${err}`)
+        return
+    }
+
+    try {
+        const edited = await store.update(req.params.id, product)
+        res.json(edited)
+    } catch (err) {
+        res.status(400)
+        res.json(`Ivalid token. ${err}`)
+    }
+}
+
+const destroy = async (req: Request, res: Response) => {
+    try {
+        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
+    } catch (err) {
+        res.status(401)
+        res.json(`Ivalid token. ${err}`)
+        return
+    }
+
+    try {
+        const deleted = await store.delete(req.params.id)
+        res.json(deleted)
+    } catch (err) {
+        res.status(400)
+        res.json(`Ivalid token. ${err}`)
+    }
+}
 
 const categoryIndex = async (req: Request, res: Response) => {
     const category = util.deserialiseCategory(req.params.category)
@@ -81,6 +113,7 @@ const topFiveProducts = async (req: Request, res: Response) => {
     try {
         const products = await store.topFiveProducts()
         res.json(products)
+        // res.send("TOP FIVE!")
     } catch (err) {
         res.status(400)
         res.json({"error":`${err}`})
@@ -110,14 +143,16 @@ const showOrderProducts = async (req: Request, res: Response) => {
 
 const productsRoute = (app: Express) => {
     app.get('/products', index)
+    app.get('/products/top_five', topFiveProducts)
+    
     app.get('/products/:id', show)
     app.post('/products', create)
-    // app.delete('/products/:id', destroy)
+    app.put('/products/:id', edit)
+    app.delete('/products/:id', destroy)
 
     app.get('/orders/:id/products', showOrderProducts)
     
     app.get('/products/categories/:category', categoryIndex)
-    app.get('/products/top_five', topFiveProducts)
 }
 
 

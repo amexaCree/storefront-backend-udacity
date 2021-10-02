@@ -5,29 +5,29 @@ let product: Product
 
 describe("Product Model", () => {
 
-  afterAll(() => {
+ 
+  describe("should have CRUD methods", () => {
 
+    it('should have an index method', () => {
+      expect(store.index).toBeDefined();
+    });
+
+    it('should have a show method', () => {
+      expect(store.show).toBeDefined();
+    });
+
+    it('should have a create method', () => {
+      expect(store.create).toBeDefined();
+    });
+
+    it('should have an update method', () => {
+      expect(store.update).toBeDefined();
+    });
+
+    it('should have a delete method', () => {
+      expect(store.delete).toBeDefined();
+    });
   })
-  
-  it('should have an index method', () => {
-    expect(store.index).toBeDefined();
-  });
-
-  it('should have a show method', () => {
-    expect(store.show).toBeDefined();
-  });
-
-  it('should have a create method', () => {
-    expect(store.create).toBeDefined();
-  });
-
-  // it('should have an update method', () => {
-  //   expect(store.update).toBeDefined();
-  // });
-
-  // it('should have a delete method', () => {
-  //   expect(store.delete).toBeDefined();
-  // });
 
   it('create method should add a product', async () => {
     const result = await store.create({

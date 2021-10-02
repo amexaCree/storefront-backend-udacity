@@ -63,6 +63,25 @@ export class UserStore {
         }
     }
 
+    async update (id: string, u: PartialUser): Promise<User> {
+        const hash = bcrypt.hashSync(
+            u.password + pepper,
+            parseInt(saltrounds as string)
+        )
+
+        try {
+            const conn = await Client.connect();
+            const sql = 'UPDATE users SET first_name = $1, last_name = $2 username=$3, password_digest=$4 WHERE id=$5 RETURNING *';
+            const result = await conn.query(sql, [u.first_name, u.last_name, u.username, hash, id]);
+            conn.release()
+            const user: User = result.rows[0] as User
+    
+            return user
+        } catch (err) {
+            throw new Error(`Could not update user ${id}. ${err}`)
+        }
+    }
+
     async delete (id: string): Promise<User> {
         try {
             const conn = await Client.connect();

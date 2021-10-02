@@ -69,6 +69,50 @@ const create = async (req: Request, res: Response) => {
     }
 }
 
+const edit = async (req: Request, res: Response) => {
+    const user: PartialUser = {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        username: req.body.username,
+        password: req.body.password
+    }
+
+    try {
+        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
+    } catch (err) {
+        res.status(401)
+        res.json(`Ivalid token. ${err}`)
+        return
+    }
+
+    try {
+        const edited = await store.update(req.params.id, user)
+        res.json(edited)
+    } catch (err) {
+        res.status(400)
+        res.json(`Ivalid token. ${err}`)
+    }
+}
+
+const destroy = async (req: Request, res: Response) => {
+    try {
+        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
+    } catch (err) {
+        res.status(401)
+        res.json(`Ivalid token. ${err}`)
+        return
+    }
+
+    try {
+        const deleted = await store.delete(req.params.id)
+        res.json(deleted)
+    } catch (err) {
+        res.status(400)
+        res.json(`Ivalid token. ${err}`)
+    }
+}
+   
+
 const login = async (req: Request, res: Response) =>  {
     try {
         const user = await store.authenticate(
@@ -89,12 +133,13 @@ const login = async (req: Request, res: Response) =>  {
 const usersRoute = (app: Express) => {
     app.get('/users', index)
     app.get('/users/:id', show)
-    // app.delete('/users/:id', destroy)
     app.post('/users', create)
+    app.put('/users/:id', edit)
+    app.delete('/users/:id', destroy)
+    
     app.post('/users/signup', create)
     app.post('users/login', login)
 }
-
 
 
 export default usersRoute

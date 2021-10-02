@@ -60,10 +60,25 @@ export class OrderStore {
         }
     }
 
+    async update (id: string, o: PartialOrder) {
+        try {
+            const conn = await Client.connect();
+            
+            const sql = "UPDATE orders SET status = $1, user_id=$2 WHERE id=$3 RETURNING *";
+            const result = await conn.query(sql, [o.status, o.user_id, id]);
+            conn.release()
+            const order: Order = result.rows[0] as Order
+    
+            return order
+        } catch (err) {
+            throw new Error(`Could not create new order ${o}. ${err}`)
+        }
+    }
+
     async delete (id: string): Promise<Order> {
         try {
             const conn = await Client.connect();
-            const sql = 'DELETE FROM orders WHERE id=($1)';
+            const sql = 'DELETE FROM orders WHERE id=$1';
             const result = await conn.query(sql, [id]);
             conn.release()
             const user: Order = result.rows[0] as Order

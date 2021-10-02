@@ -61,6 +61,47 @@ const create = async (req: Request, res: Response) => {
     }
 }
 
+const edit = async (req: Request, res: Response) => {
+    const order: PartialOrder = {
+        user_id: req.params.id || req.body.user_id,
+        status: req.body.status
+    }
+
+    try {
+        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
+    } catch (err) {
+        res.status(401)
+        res.json(`Ivalid token. ${err}`)
+        return
+    }
+
+    try {
+        const edited = await store.update(req.params.id, order)
+        res.json(edited)
+    } catch (err) {
+        res.status(400)
+        res.json(`Ivalid token. ${err}`)
+    }
+}
+
+const destroy = async (req: Request, res: Response) => {
+    try {
+        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
+    } catch (err) {
+        res.status(401)
+        res.json(`Ivalid token. ${err}`)
+        return
+    }
+
+    try {
+        const deleted = await store.delete(req.params.id)
+        res.json(deleted)
+    } catch (err) {
+        res.status(400)
+        res.json(`Ivalid token. ${err}`)
+    }
+}
+
 const addProduct = async (req: Request, res: Response) => {
     const orderId: string = req.params.id
     const productId: string = req.body.productId
@@ -157,7 +198,8 @@ const ordersRoute = (app: Express) => {
     app.get('/orders', index)
     app.get('/orders/:id', show)
     app.post('/orders', create)
-    // app.delete('/orders/:id', destroy)
+    app.put('/orders/:id', edit)
+    app.delete('/orders/:id', destroy)
 
     app.post('/orders/:id/products', addProduct)
 

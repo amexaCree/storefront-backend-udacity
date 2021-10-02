@@ -59,19 +59,19 @@ export class ProductStore {
         }
     }
 
-    // update = async (id: string, p: PartialProduct):Promise<Product> => {
-    //     try {
-    //         const conn = await Client.connect();
-    //         const sql = "UPDATE products SET name = $1, price = $2 category=$3, WHERE id=($4)";
-    //         const result = await conn.query(sql, [p.name, p.price, p.category, id]);
-    //         conn.release()
-    //         const product: Product = result.rows[0] as Product
+    update = async (id: string, p: PartialProduct):Promise<Product> => {
+        try {
+            const conn = await Client.connect();
+            const sql = "UPDATE products SET name = $1, price = $2 category=$3, WHERE id=$4 RETURNING *";
+            const result = await conn.query(sql, [p.name, p.price, p.category, id]);
+            conn.release()
+            const product: Product = result.rows[0] as Product
     
-    //         return product
-    //     } catch (err) {
-    //         throw new Error(`Could not update product ${p.id}. ${err}`)
-    //     }
-    // }
+            return product
+        } catch (err) {
+            throw new Error(`Could not update product ${id}. ${err}`)
+        }
+    }
 
     delete = async (id: string):Promise<Product> => {
         try {
