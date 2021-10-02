@@ -20,7 +20,7 @@ yarn install
 ## Database Setup
 The server application is configured to run with a Postgresql database running with the following settings:
 * Host: 127.0.0.1
-* Port: 3001
+* Port: 5432
 * Database user: "shopping_user"
 * Database name: "shopping"
 * Test database name: "shopping_test"

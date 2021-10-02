@@ -15,12 +15,11 @@ const {
 
 let client: Pool
 
-
-console.log(`environment: ~ _${ENV}_`)
-console.log("ENV=test: ~", ENV == "test")
+// console.log(`environment: ~ _${ENV}_`)
+// console.log("ENV=test: ~", ENV == "test")
 
 if (ENV == "test") {
-    console.log("test")
+    console.log("test environment")
     client = new Pool({
         port: parseInt(POSTGRES_PORT as string),
         host: POSTGRES_HOST,
@@ -32,7 +31,7 @@ if (ENV == "test") {
 
 else {
     // ENV == 'dev'
-    console.log("dev")
+    console.log("dev environment")
     client = new Pool({
         port: parseInt(POSTGRES_PORT as string),
         host: POSTGRES_HOST,
