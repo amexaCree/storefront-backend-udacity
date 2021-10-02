@@ -1,0 +1,12 @@
+#ignore generated file and folders
+node_modules/
+dist/
+
+#environment variables
+.env
+
+# macOS Files
+.DS_Store
+
+# for udacity workspace
+.ipynb_checkpoints
