@@ -22,9 +22,9 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 ## API Endpoints 
 
-e.g req.body json for endpoints that require token
+e.g authorization header for endpoints that require token
 ```json
-{ "token": "long user token ..." }
+{ "Authorization": "Bearer <long-user-token>" }
 ```
 
 ### Products Endpoints
@@ -49,7 +49,6 @@ e.g req.body json
 
 ```json
 { 
-    "token": "long user token ...",
     "name": "Turkish Delight Deluxe",
     "price": "85",
     "category": "Sweet Treats" 
@@ -60,6 +59,12 @@ e.g req.body json
 
 ```sh
 GET /products/categories/fine_dining
+```
+
+* Show top 5 most popular products
+
+```sh
+GET /products/top_five
 ```
 
 ### Users Endpoints
@@ -127,7 +132,6 @@ e.g req.body json
 
 ```json
 { 
-    "token": "long user token ... ",
     "user_id": "1"
 }
 ```
@@ -141,9 +145,10 @@ e.g req.body json
 
 ```json
 { 
-    "token": "long user token ... "
+    "status": "complete"
 }
 ```
+> Note - no payload json required for this endpoint if status of order to be created is "active"
 
 * Show all orders for user (id: 1) (token required)
 
@@ -162,6 +167,11 @@ GET /users/1/orders/active
 GET /users/1/orders/completed
 ```
 
+### Dashboard Endpoints
+```sh
+GET /top_five_products
+```
+> This returns the top five most popular products from all orders made.
 
 ## Database Tables and Schemas
 

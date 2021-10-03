@@ -2,6 +2,7 @@ import { Express, Request, Response } from 'express';
 import { PartialOrder, OrderStore } from '../models/order'
 import jwt from 'jsonwebtoken';
 import util from '../util/helpers'
+import auth from '../middleware/authorize'
 
 const store = new OrderStore()
 
@@ -16,13 +17,6 @@ const index = async (_req: Request, res: Response) => {
 }
 
 const show = async (req: Request, res: Response) => {
-    try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }
 
     try {
         const order = await store.show(req.params.id)
@@ -37,14 +31,6 @@ const create = async (req: Request, res: Response) => {
     const order: PartialOrder = {
         user_id: req.params.id || req.body.user_id,
         status: req.body.status
-    }
-
-    try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
     }
 
     if (order.user_id == "" || typeof order.user_id == 'undefined' ) {
@@ -68,14 +54,6 @@ const edit = async (req: Request, res: Response) => {
     }
 
     try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }
-
-    try {
         const edited = await store.update(req.params.id, order)
         res.json(edited)
     } catch (err) {
@@ -85,13 +63,6 @@ const edit = async (req: Request, res: Response) => {
 }
 
 const destroy = async (req: Request, res: Response) => {
-    try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }
 
     try {
         const deleted = await store.delete(req.params.id)
@@ -106,14 +77,6 @@ const addProduct = async (req: Request, res: Response) => {
     const orderId: string = req.params.id
     const productId: string = req.body.productId
     const quantity: number = parseInt(req.body.quantity as string) || 0
-
-    try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }    
 
     // console.log(`order:, productId: , quantity: `)
     console.log(`order: ${orderId} ${util.isEmpty(orderId)}, 
@@ -138,14 +101,6 @@ const usersOrders = async (req: Request, res: Response) => {
     const userId: string = req.params.id
 
     try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }    
-
-    try {
         const activeOrder  = await store.usersOrders(userId)
         res.json(activeOrder)
     } catch (err) {
@@ -156,14 +111,6 @@ const usersOrders = async (req: Request, res: Response) => {
 
 const userActiveOrder = async (req: Request, res: Response) => {
     const userId: string = req.params.id
-
-    try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }    
 
     try {
         const activeOrder  = await store.userActiveOrder(userId)
@@ -178,14 +125,6 @@ const userCompletedOrders = async (req: Request, res: Response) => {
     const userId: string = req.params.id
 
     try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }    
-
-    try {
         const completedOrders  = await store.userCompletedOrders(userId)
         res.json(completedOrders)
     } catch (err) {
@@ -195,18 +134,18 @@ const userCompletedOrders = async (req: Request, res: Response) => {
 }
 
 const ordersRoute = (app: Express) => {
-    app.get('/orders', index)
-    app.get('/orders/:id', show)
-    app.post('/orders', create)
-    app.put('/orders/:id', edit)
-    app.delete('/orders/:id', destroy)
+    app.get('/orders', auth, index)
+    app.get('/orders/:id', auth, show)
+    app.post('/orders', auth, create)
+    app.put('/orders/:id', auth, edit)
+    app.delete('/orders/:id', auth, destroy)
 
-    app.post('/orders/:id/products', addProduct)
+    app.post('/orders/:id/products', auth, addProduct)
 
-    app.get('/users/:id/orders', usersOrders)
-    app.post('/users/:id/orders', create)
-    app.get('/users/:id/orders/active', userActiveOrder)
-    app.get('/users/:id/orders/completed', userCompletedOrders)
+    app.get('/users/:id/orders', auth, usersOrders)
+    app.post('/users/:id/orders', auth, create)
+    app.get('/users/:id/orders/active', auth, userActiveOrder)
+    app.get('/users/:id/orders/completed', auth, userCompletedOrders)
 }
 
 

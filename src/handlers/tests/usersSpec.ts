@@ -33,6 +33,7 @@ describe("User endpoints", () => {
                 .get('/users')
                 .send({token: token})
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${token}`)
 
             users = result.body
             user = users[users.length-1]
@@ -55,6 +56,7 @@ describe("User endpoints", () => {
             result = await request
                 .get(`/users/${user.id}`)
                 .send({token: token}) 
+                .set('Authorization', `Bearer ${token}`)
         
             expect(result.status).toEqual(200)
         })
@@ -75,6 +77,7 @@ describe("User endpoints", () => {
                 .delete(`/users/${user.id}`)
                 .send({token: token}) 
                 .set('Accept', 'application/json')    
+                .set('Authorization', `Bearer ${token}`)
         
             expect(result.status).toEqual(200)
         })
@@ -84,6 +87,7 @@ describe("User endpoints", () => {
                 .get('/users')
                 .send({token: token})
                 .set('Accept', 'application/json')
+                .set('Authorization', `Bearer ${token}`)
 
             expect(result.body.length).toEqual(users.length - 1)
 

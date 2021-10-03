@@ -2,19 +2,12 @@ import { Express, Request, Response } from 'express';
 import { User, PartialUser, UserStore } from '../models/user';
 import jwt from 'jsonwebtoken';
 import util from '../util/helpers'
+import auth from '../middleware/authorize'
 
 
 const store = new UserStore()
 
 const index = async (req: Request, res: Response) => {
-    try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }
-
     try {
         const users = await store.index()
         res.json(users)
@@ -25,14 +18,6 @@ const index = async (req: Request, res: Response) => {
 }
 
 const show = async (req: Request, res: Response) => {
-    try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }
-
     try {
         const record = await store.show(req.params.id)
         const user: User = {
@@ -69,7 +54,7 @@ const create = async (req: Request, res: Response) => {
     }
 }
 
-const edit = async (req: Request, res: Response) => {
+const update = async (req: Request, res: Response) => {
     const user: PartialUser = {
         first_name: req.body.first_name,
         last_name: req.body.last_name,
@@ -78,30 +63,15 @@ const edit = async (req: Request, res: Response) => {
     }
 
     try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }
-
-    try {
         const edited = await store.update(req.params.id, user)
         res.json(edited)
     } catch (err) {
         res.status(400)
-        res.json(`Ivalid token. ${err}`)
+        res.json(`error: ${err}`)
     }
 }
 
 const destroy = async (req: Request, res: Response) => {
-    try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }
 
     try {
         const deleted = await store.delete(req.params.id)
@@ -131,12 +101,12 @@ const login = async (req: Request, res: Response) =>  {
 }
 
 const usersRoute = (app: Express) => {
-    app.get('/users', index)
-    app.get('/users/:id', show)
-    app.post('/users', create)
-    app.put('/users/:id', edit)
-    app.delete('/users/:id', destroy)
+    app.get('/users', auth, index)
+    app.get('/users/:id', auth, show)
+    app.put('/users/:id', auth, update)
+    app.delete('/users/:id', auth, destroy)
     
+    app.post('/users', create)
     app.post('/users/signup', create)
     app.post('users/login', login)
 }

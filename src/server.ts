@@ -3,7 +3,7 @@ import { Express, RequestHandler } from 'express';
 import productsRoute from './handlers/products';
 import usersRoute from './handlers/users';
 import ordersRoute from './handlers/orders';
-import productsInOrders from './handlers/productsInOrders';
+import dashboardRoutes from './handlers/dashboard';
 
 const app: Express = express()
 const address: string = "0.0.0.0:3000"
@@ -18,7 +18,7 @@ app.get('/', function (req: Request, res: Response) {
 productsRoute(app)
 usersRoute(app)
 ordersRoute(app)
-productsInOrders(app)
+dashboardRoutes(app)
 
 app.listen(3000, function () {
     console.log(`starting app on: ${address}`)

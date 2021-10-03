@@ -21,6 +21,7 @@ describe("Orders endpoints", () => {
         const result = await request
             .delete('/users/1')
             .send({token: token})
+            .set('Authorization', `Bearer ${token}`)
     })
 
     describe('POST /orders', () => {
@@ -37,6 +38,7 @@ describe("Orders endpoints", () => {
             result = await request
             .post('/orders')
             .send({status: 'active', user_id: "1",  token: token})
+            .set('Authorization', `Bearer ${token}`)
 
             order = result.body
             expect(result.status).toEqual(200)
@@ -55,6 +57,7 @@ describe("Orders endpoints", () => {
         it('responds with status 200', async () => {
             result = await request
                 .get('/orders')
+                .set('Authorization', `Bearer ${token}`)
 
             orders = result.body      
         
@@ -76,6 +79,7 @@ describe("Orders endpoints", () => {
             result = await request
                 .delete('/orders/1')
                 .send({token: token})
+                .set('Authorization', `Bearer ${token}`)
 
             orders = result.body      
         
@@ -85,6 +89,7 @@ describe("Orders endpoints", () => {
         it('should return no orders', async() => {
             result = await request
                 .get('/orders')
+                .set('Authorization', `Bearer ${token}`)
             expect(result.body).toEqual([])
         })
 

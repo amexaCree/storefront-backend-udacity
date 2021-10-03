@@ -104,12 +104,10 @@ export class ProductStore {
     topFiveProducts = async (): Promise<{name: string, price: number, order_id: string}[]> => {
         try {
           const conn = await Client.connect()
-        //   const sql = `SELECT products.id, products.name, products.price, count(order_products.order_id), SUM(order_products.quantity) 
-        //   FROM products RIGHT JOIN order_products ON products.id = order_products.product_id GROUP BY products.id, products.name, products.price 
-        //   ORDER BY SUM(order_products.quantity)`
           const sql = `SELECT products.id, products.name, products.price, count(order_products.order_id), SUM(order_products.quantity)
           FROM products RIGHT JOIN order_products ON products.id = order_products.product_id GROUP BY products.id, products.name, products.price 
-          ORDER BY count(order_products.order_id), SUM(order_products.quantity) LIMIT 5`
+          ORDER BY count(order_products.order_id), SUM(order_products.quantity) DESC 
+          LIMIT 5`
     
           const result = await conn.query(sql)
     

@@ -2,6 +2,7 @@ import { Express, Request, Response } from 'express';
 import { PartialProduct, ProductStore } from '../models/product'
 import jwt from 'jsonwebtoken';
 import util from '../util/helpers'
+import auth from '../middleware/authorize'
 
 
 const store = new ProductStore()
@@ -32,13 +33,6 @@ const create = async (req: Request, res: Response) => {
         price: req.body.price,
         category: req.body.category
     }
-    try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }
 
     if (util.isEmpty(product.name) || product.price == 0) {
         res.json("Invalid arguments. Requires product name and price")
@@ -62,14 +56,6 @@ const edit = async (req: Request, res: Response) => {
     }
 
     try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }
-
-    try {
         const edited = await store.update(req.params.id, product)
         res.json(edited)
     } catch (err) {
@@ -79,13 +65,6 @@ const edit = async (req: Request, res: Response) => {
 }
 
 const destroy = async (req: Request, res: Response) => {
-    try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }
 
     try {
         const deleted = await store.delete(req.params.id)
@@ -125,14 +104,6 @@ const showOrderProducts = async (req: Request, res: Response) => {
     const orderId: string = req.params.id
 
     try {
-        jwt.verify(req.body.token, process.env.TOKEN_SECRET as string)
-    } catch (err) {
-        res.status(401)
-        res.json(`Ivalid token. ${err}`)
-        return
-    }    
-
-    try {
         const orderProducts  = await store.showOrderProducts(orderId)
         res.json(orderProducts)
     } catch (err) {
@@ -146,11 +117,11 @@ const productsRoute = (app: Express) => {
     app.get('/products/top_five', topFiveProducts)
     
     app.get('/products/:id', show)
-    app.post('/products', create)
-    app.put('/products/:id', edit)
-    app.delete('/products/:id', destroy)
+    app.post('/products', auth, create)
+    app.put('/products/:id', auth, edit)
+    app.delete('/products/:id', auth, destroy)
 
-    app.get('/orders/:id/products', showOrderProducts)
+    app.get('/orders/:id/products', auth, showOrderProducts)
     
     app.get('/products/categories/:category', categoryIndex)
 }

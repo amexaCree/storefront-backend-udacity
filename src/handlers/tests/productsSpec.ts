@@ -14,6 +14,7 @@ describe("Product endpoints", () => {
             .post('/users')
             .send({username: 'testUser', password: 'secret'})
             .set('Accept', 'application/json')
+            .set('Authorization', `Bearer ${token}`)
         token = result.body
     })
 
@@ -21,6 +22,7 @@ describe("Product endpoints", () => {
         const result = await request
             .delete('/users/1')
             .send({token: token})
+            .set('Authorization', `Bearer ${token}`)
     })
 
     describe('POST /products', () => {
@@ -38,6 +40,7 @@ describe("Product endpoints", () => {
             .post('/products')
             .send({name: 'Pencils', price: '5', category: 'stationery', token: token})
             .set('Accept', 'application/json')
+            .set('Authorization', `Bearer ${token}`)
 
             product = result.body
         
@@ -102,6 +105,7 @@ describe("Product endpoints", () => {
             result = await request
                 .delete('/products/1')
                 .send({token: token})
+                .set('Authorization', `Bearer ${token}`)
 
             products = result.body      
         
