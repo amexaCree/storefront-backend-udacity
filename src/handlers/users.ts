@@ -61,14 +61,27 @@ const update = async (req: Request, res: Response) => {
         username: req.body.username,
         password: req.body.password
     }
+    const userRole = req.body.userRole
+    console.log("userRole", userRole)
 
     try {
-        const edited = await store.update(req.params.id, user)
-        res.json(edited)
+        if(userRole.id !== user.id) {
+            throw new Error('User id does not match!')
+        }
     } catch (err) {
-        res.status(400)
-        res.json(`error: ${err}`)
+        res.json(`${err}`)
+        return
     }
+
+    res.json("Update User!")
+
+    // try {
+    //     const edited = await store.update(req.params.id, user)
+    //     res.json(edited)
+    // } catch (err) {
+    //     res.status(400)
+    //     res.json(`error: ${err}`)
+    // }
 }
 
 const destroy = async (req: Request, res: Response) => {
