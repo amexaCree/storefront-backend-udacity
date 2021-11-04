@@ -12,12 +12,12 @@
 * yarn
 
 ## Install
-
+Run the following command in the projects root folder to install dependencies. All provided yarn commands are run at the root level of the project.
 ```sh
 yarn install
 ```
 
-## Database Setup
+## Database Setup (for both development and test databases)
 The server application is configured to run with a Postgresql database running with the following settings:
 * Host: 127.0.0.1
 * Port: 5432
@@ -25,7 +25,7 @@ The server application is configured to run with a Postgresql database running w
 * Database name: "shopping"
 * Test database name: "shopping_test"
 
-To set up the database, use the following commands in postgresql environment:
+To set up the database (dev + test), use the following commands in postgresql environment:
 ```sh
   CREATE USER shopping_user WITH PASSWORD 'yourpasswordhere';
   CREATE DATABASE shopping; 
@@ -54,27 +54,32 @@ TOKEN_SECRET=wicked-witch-of-the-west
 ```
 
 ## Usage
+To start the server appplication run the following command. 
 
 ```sh
 yarn watch
 ```
-> This starts server appplication which is configured to run at http://localhost:3000.
-
-
+The application is configured to run on localhost port 3000 - http://localhost:3000.
 
 ## Run tests
+To run available tests, use following command.
 
 ```sh
 yarn test
 ```
+This temporarily modifies the ENV key in environment variables from 'dev' to 'test' and runs migrations to setup the test database to be used for testing.
+The test database is pulled down after tests are complete.
 
 ## Run build
+The following command can be used to compile and build the project from typescript to javascript.
 
 ```sh
 yarn build
 ```
-
-
+Once the build is complete the built project can be found in the dist folder. To start the built application you can run the following command in the root folder of the project.
+```sh
+node dist/.
+```
 
 ## Author
 
